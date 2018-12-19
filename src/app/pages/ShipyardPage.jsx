@@ -169,7 +169,6 @@ export default class ShipyardPage extends Page {
    * @param  {Object} u           Localized unit map
    * @param  {Function} fInt      Localized integer formatter
    * @param  {Function} fRound    Localized round formatter
-   * @param  {Boolean} highlight  Should this row be highlighted
    * @return {React.Component}    Table Row
    */
   _shipRowElement(s, translate, u, fInt, fRound) {
