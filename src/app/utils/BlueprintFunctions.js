@@ -1,5 +1,6 @@
 import React from 'react';
 import { Modifications } from 'coriolis-data/dist';
+import { STATS_FORMATTING } from '../shipyard/StatsFormatting';
 
 /**
  * Generate a tooltip with details of a blueprint's specials
@@ -281,6 +282,25 @@ export function isValueBeneficial(feature, value) {
 }
 
 /**
+ * Is the change as shown beneficial?
+ * @param {string} feature The name of the feature
+ * @param {number} value The value of the feature as percentage change
+ * @returns True if the value is beneficial
+ */
+export function isChangeValueBeneficial(feature, value) {
+  let changeHigherBetter = STATS_FORMATTING[feature].higherbetter;
+  if (changeHigherBetter === undefined) {
+    return isValueBeneficial(feature, value);
+  }
+
+  if (changeHigherBetter) {
+    return value > 0;
+  } else {
+    return value < 0;
+  }
+}
+
+/**
  * Get a blueprint with a given name and an optional module
  * @param   {string} name    The name of the blueprint
  * @param   {Object} module  The module for which to obtain this blueprint
@@ -372,9 +392,7 @@ export function getPercent(m) {
 
     let value = _getValue(m, featureName);
     let mult;
-    if (featureName == 'shieldboost') {
-      mult = ((1 + value) * (1 + m.shieldboost)) - 1 - m.shieldboost;
-    } else if (Modifications.modifications[featureName].higherbetter) {
+    if (Modifications.modifications[featureName].higherbetter) {
       // Higher is better, but is this making it better or worse?
       if (features[featureName][0] < 0 || (features[featureName][0] === 0 && features[featureName][1] < 0)) {
         mult = Math.round((value - features[featureName][1]) / (features[featureName][0] - features[featureName][1]) * 100);

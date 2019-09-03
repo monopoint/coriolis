@@ -10,7 +10,7 @@ import { Ships, Modifications } from 'coriolis-data/dist';
 import { chain } from 'lodash';
 const zlib = require('zlib');
 
-const UNIQUE_MODULES = ['psg', 'sg', 'bsg', 'rf', 'fs', 'fh', 'gfsb'];
+const UNIQUE_MODULES = ['psg', 'sg', 'bsg', 'rf', 'fs', 'fh', 'gfsb', 'dc'];
 
 // Constants for modifications struct
 const SLOT_ID_DONE = -1;
@@ -1308,7 +1308,7 @@ export default class Ship {
     let fsd = this.standard[2].m;   // Frame Shift Drive;
     let { unladenMass, fuelCapacity } = this;
     this.unladenRange = this.calcUnladenRange(); // Includes fuel weight for jump
-    this.fullTankRange = Calc.jumpRange(unladenMass + fuelCapacity, fsd, this); // Full Tank
+    this.fullTankRange = Calc.jumpRange(unladenMass + fuelCapacity, fsd, fuelCapacity, this); // Full Tank
     this.ladenRange = this.calcLadenRange(); // Includes full tank and caro
     this.unladenFastestRange = Calc.totalJumpRange(unladenMass + this.fuelCapacity, fsd, fuelCapacity, this);
     this.ladenFastestRange = Calc.totalJumpRange(unladenMass + this.fuelCapacity + this.cargoCapacity, fsd, fuelCapacity, this);

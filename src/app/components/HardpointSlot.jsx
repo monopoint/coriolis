@@ -104,10 +104,10 @@ export default class HardpointSlot extends Slot {
                                 onMouseOut={tooltip.bind(null, null)}>{translate('shotdmg')}: {formats.round1(m.getDamage())}</div> : null}
           {m.getEps() ? <div className={'l'} onMouseOver={termtip.bind(null, m.getClip() ? 'epsseps' : 'eps')}
                              onMouseOut={tooltip.bind(null, null)}>{translate('EPS')}: {formats.round1(m.getEps())}{u.MW} {m.getClip() ?
-            <span>({formats.round1((m.getClip() * m.getEps() / m.getRoF()) / ((m.getClip() / m.getRoF()) + m.getReload()))}{u.MW})</span> : null}</div> : null}
+            <span>({formats.round1(m.getEps() / m.getDps() * m.getSDps())}{u.MW})</span> : null}</div> : null}
           {m.getHps() ? <div className={'l'} onMouseOver={termtip.bind(null, m.getClip() ? 'hpsshps' : 'hps')}
                              onMouseOut={tooltip.bind(null, null)}>{translate('HPS')}: {formats.round1(m.getHps())} {m.getClip() ?
-            <span>({formats.round1((m.getClip() * m.getHps() / m.getRoF()) / ((m.getClip() / m.getRoF()) + m.getReload()))})</span> : null}</div> : null}
+            <span>({formats.round1(m.getHps() / m.getDps() * m.getSDps())})</span> : null}</div> : null}
           {m.getDps() && m.getEps() ? <div className={'l'} onMouseOver={termtip.bind(null, 'dpe')}
                                            onMouseOut={tooltip.bind(null, null)}>{translate('DPE')}: {formats.f1(m.getDps() / m.getEps())}</div> : null}
           {m.getRoF() ? <div className={'l'} onMouseOver={termtip.bind(null, 'rof')}
@@ -121,11 +121,14 @@ export default class HardpointSlot extends Slot {
           {m.getShieldBoost() ? <div className={'l'}>+{formats.pct1(m.getShieldBoost())}</div> : null}
           {m.getAmmo() ? <div
             className={'l'}>{translate('ammunition')}: {formats.int(m.getClip())}/{formats.int(m.getAmmo())}</div> : null}
-          {m.getReload() ? <div className={'l'}>{translate('reload')}: {formats.round(m.getReload())}{u.s}</div> : null}
+          {m.getReload() ? <div className={'l'}>{translate('wep_reload')}: {formats.round(m.getReload())}{u.s}</div> : null}
           {m.getShotSpeed() ? <div
             className={'l'}>{translate('shotspeed')}: {formats.int(m.getShotSpeed())}{u.mps}</div> : null}
           {m.getPiercing() ? <div className={'l'}>{translate('piercing')}: {formats.int(m.getPiercing())}</div> : null}
           {m.getJitter() ? <div className={'l'}>{translate('jitter')}: {formats.f2(m.getJitter())}°</div> : null}
+          {m.getScanAngle() ? <div className={'l'}>{translate('scan angle')}: {formats.f2(m.getScanAngle())}°</div> : null}
+          {m.getScanRange() ? <div className={'l'}>{translate('scan range')}: {formats.int(m.getScanRange())}{u.m}</div> : null}
+          {m.getMaxAngle() ? <div className={'l'}>{translate('max angle')}: {formats.f2(m.getMaxAngle())}°</div> : null}
           {showModuleResistances && m.getExplosiveResistance() ? <div
             className='l'>{translate('explres')}: {formats.pct(m.getExplosiveResistance())}</div> : null}
           {showModuleResistances && m.getKineticResistance() ? <div

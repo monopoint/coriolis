@@ -149,13 +149,13 @@ export default class HardpointSlotSection extends SlotSection {
       <ul>
         <li className='lc' tabIndex='0'  onClick={_fill.bind(this, 'pa', 'F')} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['pa-F'] = smRef}>{translate('pa')}</li>
       </ul>
+      <div className='select-group cap'>{translate('rg')}</div>
+      <ul>
+        <li className='lc' tabIndex='0'  onClick={_fill.bind(this, 'rg', 'F')} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['rg-F'] = smRef}>{translate('rg')}</li>
+      </ul>
       <div className='select-group cap'>{translate('nl')}</div>
       <ul>
         <li className='lc' tabIndex='0' onClick={_fill.bind(this, 'nl', 'F')} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['nl-F'] = smRef}>{translate('nl')}</li>
-      </ul>
-      <div className='select-group cap'>{translate('ggc')}</div>
-      <ul>
-        <li className='lc' tabIndex='0' onClick={_fill.bind(this, 'ggc', 'F')} onKeyDown={this._keyDown} ref={smRef => this.sectionRefArr['ggc-F'] = smRef}>{translate('ggc')}</li>
       </ul>
       <div className='select-group cap'>{translate('rfl')}</div>
       <ul>

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Router from './Router';
-import { register } from 'register-service-worker'
+import { register } from 'register-service-worker';
 import { EventEmitter } from 'fbemitter';
 import { getLanguage } from './i18n/Language';
 import Persist from './stores/Persist';
@@ -72,7 +72,7 @@ export default class Coriolis extends React.Component {
       route: {},
       sizeRatio: Persist.getSizeRatio()
     };
-    this._getAnnouncements()
+    this._getAnnouncements();
     Router('', (r) => this._setPage(ShipyardPage, r));
     Router('/import?', (r) => this._importBuild(r));
     Router('/import/:data', (r) => this._importBuild(r));
@@ -105,18 +105,20 @@ export default class Coriolis extends React.Component {
       }
       r.params.ship = ship.id;
       r.params.code = ship.toString();
-      this._setPage(OutfittingPage, r);
+      this._setPage(OutfittingPage, r)
     } catch (err) {
       this._onError('Failed to import ship', r.path, 0, 0, err);
     }
   }
 
-  _getAnnouncements() {
-    return request.get('https://orbis.zone/api/announcement')
-    .query({showInCoriolis: true})
-    .then(announces => {
-      this.setState({ announcements: announces.body })
-    })
+  async _getAnnouncements() {
+    try {
+      const announces = await request.get('https://orbis.zone/api/announcement')
+        .query({ showInCoriolis: true });
+      this.setState({ announcements: announces.body });
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   /**
@@ -351,27 +353,27 @@ export default class Coriolis extends React.Component {
       const self = this;
       if (process.env.NODE_ENV === 'production') {
         register('/service-worker.js', {
-          ready (registration) {
-            console.log('Service worker is active.')
+          ready(registration) {
+            console.log('Service worker is active.');
           },
-          registered (registration) {
-            console.log('Service worker has been registered.')
+          registered(registration) {
+            console.log('Service worker has been registered.');
           },
-          cached (registration) {
-            console.log('Content has been cached for offline use.')
+          cached(registration) {
+            console.log('Content has been cached for offline use.');
           },
-          updatefound (registration) {
-            console.log('New content is downloading.')
+          updatefound(registration) {
+            console.log('New content is downloading.');
           },
-          updated (registration) {
+          updated(registration) {
             self.setState({ appCacheUpdate: true });
-            console.log('New content is available; please refresh.')
+            console.log('New content is available; please refresh.');
           },
-          offline () {
-            console.log('No internet connection found. App is running in offline mode.')
+          offline() {
+            console.log('No internet connection found. App is running in offline mode.');
           },
-          error (error) {
-            console.error('Error during service worker registration:', error)
+          error(error) {
+            console.error('Error during service worker registration:', error);
           }
         });
       }
@@ -394,21 +396,24 @@ export default class Coriolis extends React.Component {
     let currentMenu = this.state.currentMenu;
 
     return <div style={{ minHeight: '100%' }} onClick={this._closeMenu}
-      className={this.state.noTouch ? 'no-touch' : null}>
-      <Header announcements={this.state.announcements} appCacheUpdate={this.state.appCacheUpdate} currentMenu={currentMenu} />
-      <div className="announcement-container">{this.state.announcements.map(a => <Announcement text={a.message}/>)}</div>
+                className={this.state.noTouch ? 'no-touch' : null}>
+      <Header announcements={this.state.announcements} appCacheUpdate={this.state.appCacheUpdate}
+              currentMenu={currentMenu}/>
+      <div className="announcement-container">{this.state.announcements.map(a => <Announcement
+        text={a.message}/>)}</div>
       {this.state.error ? this.state.error : this.state.page ? React.createElement(this.state.page, { currentMenu }) :
-        <NotFoundPage />}
+        <NotFoundPage/>}
       {this.state.modal}
       {this.state.tooltip}
       <footer>
         <div className="right cap">
           <a href="https://github.com/EDCD/coriolis" target="_blank" rel="noopener noreferrer"
-            title="Coriolis Github Project">{window.CORIOLIS_VERSION} - {window.CORIOLIS_DATE}</a>
+             title="Coriolis Github Project">{window.CORIOLIS_VERSION} - {window.CORIOLIS_DATE}</a>
           <br/>
           <a
             href={'https://github.com/EDCD/coriolis/compare/edcd:develop@{' + window.CORIOLIS_DATE + '}...edcd:develop'}
-            target="_blank" rel="noopener noreferrer" title={'Coriolis Commits since' + window.CORIOLIS_DATE}>Commits since last release
+            target="_blank" rel="noopener noreferrer" title={'Coriolis Commits since' + window.CORIOLIS_DATE}>Commits
+            since last release
             ({window.CORIOLIS_DATE})</a>
         </div>
       </footer>

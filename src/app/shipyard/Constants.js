@@ -57,6 +57,7 @@ export const ModuleGroupToName = {
   ghrp: 'Guardian Hull Reinforcement Package',
   gmrp: 'Guardian Module Reinforcement Package',
   mahr: 'Meta Alloy Hull Reinforcement Package',
+  sua: 'Supercruise Assist',
 
   // Hard Points
   bl: 'Beam Laser',
@@ -94,6 +95,10 @@ export const ModuleGroupToName = {
   gsc: 'Guardian Shard Cannon',
   tbem: 'Enzyme Missile Rack',
   tbrfl: 'Remote Release Flechette Launcher',
+  pwa: 'Pulse Wave Analyser',
+  abl: 'Abrasion Blaster',
+  scl: 'Seismic Charge Launcher',
+  sdm: 'Sub-Surface Displacement Missile',
 };
 
 let GrpNameToCodeMap = {};
@@ -202,7 +207,7 @@ export const ShipFacets = [
     i: 9
   },
   {                   // 10
-    title: 'fastest range',
+    title: 'farthest range',
     props: ['unladenFastestRange', 'ladenFastestRange'],
     lbls: ['unladen', 'laden'],
     unit: 'LY',

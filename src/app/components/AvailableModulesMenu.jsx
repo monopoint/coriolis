@@ -73,7 +73,16 @@ const GRPCAT = {
   'gfsb': 'guardian',
   'gmrp': 'guardian',
   'gsc': 'guardian',
-  'ghrp': 'guardian'
+  'ghrp': 'guardian',
+
+  // Mining
+  'scl': 'mining',
+  'pwa': 'mining',
+  'sdm': 'mining',
+
+  // Assists
+  'dc': 'flight assists',
+  'sua': 'flight assists',
 };
 // Order here is the order in which items will be shown in the modules menu
 const CATEGORIES = {
@@ -88,9 +97,10 @@ const CATEGORIES = {
   'rf': ['rf'],
   'shields': ['sg', 'bsg', 'psg', 'scb'],
   'structural reinforcement': ['hr', 'mrp'],
-  'dc': ['dc'],
+  'flight assists': ['dc', 'sua'],
+
   // Hardpoints
-  'lasers': ['pl', 'ul', 'bl', 'ml'],
+  'lasers': ['pl', 'ul', 'bl'],
   'projectiles': ['mc', 'c', 'fc', 'pa', 'rg'],
   'ordnance': ['mr', 'tp', 'nl'],
   // Utilities
@@ -102,7 +112,9 @@ const CATEGORIES = {
   'experimental': ['axmc', 'axmr', 'rfl', 'tbrfl', 'tbsc', 'tbem', 'xs', 'sfn', 'rcpl', 'dtl', 'rsl', 'mahr',],
 
   // Guardian
-  'guardian': ['gpp', 'gpd', 'gpc', 'ggc', 'gsrp', 'gfsb', 'ghrp', 'gmrp', 'gsc']
+  'guardian': ['gpp', 'gpd', 'gpc', 'ggc', 'gsrp', 'gfsb', 'ghrp', 'gmrp', 'gsc'],
+
+  'mining': ['ml', 'scl', 'pwa', 'sdm', 'abl'],
 };
 
 /**
@@ -114,16 +126,12 @@ export default class AvailableModulesMenu extends TranslatedComponent {
     onSelect: PropTypes.func.isRequired,
     diffDetails: PropTypes.func,
     m: PropTypes.object,
-    shipMass: PropTypes.number,
+    ship: PropTypes.object.isRequired,
     warning: PropTypes.func,
     firstSlotId: PropTypes.string,
     lastSlotId: PropTypes.string,
     activeSlotId: PropTypes.string,
     slotDiv: PropTypes.object
-  };
-
-  static defaultProps = {
-    shipMass: 0
   };
 
   /**
@@ -147,15 +155,15 @@ export default class AvailableModulesMenu extends TranslatedComponent {
    */
   _initState(props, context) {
     let translate = context.language.translate;
-    let { m, warning, shipMass, onSelect, modules, firstSlotId, lastSlotId } = props;
+    let { m, warning, onSelect, modules, ship } = props;
     let list, currentGroup;
 
     let buildGroup = this._buildGroup.bind(
       this,
+      ship,
       translate,
       m,
       warning,
-      shipMass - (m && m.mass ? m.mass : 0),
       (m, event) => {
         this._hideDiff(event);
         onSelect(m);
@@ -221,7 +229,16 @@ export default class AvailableModulesMenu extends TranslatedComponent {
               }
               list.push(buildGroup(grp, modules[grp]));
               for (const i of modules[grp]) {
-                fuzzy.push({ grp, m: i, name: `${i.class}${i.rating} ${translate(grp)} ${i.mount ? i.mount : ''}` });
+                let mount = '';
+                if (i.mount === 'F') {
+                  mount = 'Fixed';
+                } else if (i.mount === 'G') {
+                  mount = 'Gimballed';
+                } else if (i.mount === 'T') {
+                  mount = 'Turreted';
+                }
+                const fuzz = { grp, m: i, name: `${i.class}${i.rating}${mount ? ' '  + mount : ''} ${translate(grp)}` };
+                fuzzy.push(fuzz);
               }
             }
           }
@@ -234,18 +251,16 @@ export default class AvailableModulesMenu extends TranslatedComponent {
 
   /**
    * Generate React Components for Module Group
+   * @param  {Ship} ship            Ship the selection is for
    * @param  {Function} translate   Translate function
    * @param  {Object} mountedModule Mounted Module
    * @param  {Function} warningFunc Warning function
-   * @param  {number} mass          Mass
    * @param  {function} onSelect    Select/Mount callback
    * @param  {string} grp           Group name
    * @param  {Array} modules        Available modules
-   * @param  {string} firstSlotId   id of first slot item
-   * @param  {string} lastSlotId    id of last slot item
    * @return {React.Component}      Available Module Group contents
    */
-  _buildGroup(translate, mountedModule, warningFunc, mass, onSelect, grp, modules, firstSlotId, lastSlotId) {
+  _buildGroup(ship, translate, mountedModule, warningFunc, onSelect, grp, modules) {
     let prevClass = null, prevRating = null, prevName;
     let elems = [];
 
@@ -266,10 +281,11 @@ export default class AvailableModulesMenu extends TranslatedComponent {
       prevName = m.name;
       if (ModuleUtils.isShieldGenerator(m.grp)) {
         // Shield generators care about maximum hull mass
-        disabled = mass > m.maxmass;
-      } else if (m.maxmass) {
-        // Thrusters care about total mass
-        disabled = mass + m.mass > m.maxmass;
+        disabled = ship.hullMass > m.maxmass;
+      // If the mounted module is experimental as well, we can replace it so
+      // the maximum does not apply
+      } else if (m.experimental && (!mountedModule || !mountedModule.experimental)) {
+        disabled = 4 <= ship.hardpoints.filter(o => o.m && o.m.experimental).length;
       }
       let active = mountedModule && mountedModule.id === m.id;
       let classes = cn(m.name ? 'lc' : 'c', {
@@ -363,10 +379,14 @@ export default class AvailableModulesMenu extends TranslatedComponent {
    * mounted module and the hovered modules
    */
   _showSearch() {
+    if (this.props.modules instanceof Array) {
+      return;
+    }
     return (
       <FuzzySearch
         list={this.state.fuzzy}
         keys={['grp', 'name']}
+        tokenize={true}
         className={'input'}
         width={'100%'}
         style={{ padding: 0 }}
