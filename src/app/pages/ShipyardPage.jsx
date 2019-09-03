@@ -152,6 +152,10 @@ export default class ShipyardPage extends Page {
     this.setState({ compare });
   }
 
+  /**
+   * Toggle grouping of compared ships in the table
+   * @private
+   */
   _toggleGroupCompared() {
     this.setState({groupCompared: !this.state.groupCompared})
   }
